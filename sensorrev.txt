@@ -1,224 +1,179 @@
 #include "stm32f4xx.h"
-int hiz=0;
-unsigned int ccr=400;
-unsigned int adc;
+
+unsigned int ccr=100, sur =10, adc;
 float voltaj = 10;
-int i;
-int a=0;
-int HA;
-int HB;
-int HC;
-unsigned int sur =10;
+int i, hiz=0;
+int HA, HB, HC;
 
 void sensor(){
 	if(GPIOA->IDR & 1<<10)
 { HA=1;
 }else
 {HA=0;
-}if(GPIOA->IDR & 1<<8)
-{HB=1;
-} else
-{ HB=0;
-} if(GPIOA->IDR & 1<<15)
-{ HC=1;
-} else
-{ HC=0;
+}if(GPIOA->IDR & 1<<8){HB=1;
+} else { HB=0;
+} if(GPIOA->IDR & 1<<15){ HC=1; 
+} else { HC=0;
 }}
 
-void capture(){
-	TIM4->CCR1 &= ~TIM_PSC_PSC;
-TIM4->CCR1 |= ccr;
-TIM3->CCR1 &= ~TIM_PSC_PSC;
-TIM3->CCR1 |= ccr;
-TIM3->CCR3 &= ~TIM_PSC_PSC;
-TIM3->CCR3 |= ccr;
+void durum1(){
+GPIOA->ODR &= ~ GPIO_ODR_OD6; // 101
+GPIOB->ODR &= ~ GPIO_ODR_OD4;
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
+GPIOC->MODER |= GPIO_MODER_MODER6_0;
+GPIOC->ODR |= GPIO_ODR_OD6;
+GPIOB->MODER |= GPIO_MODER_MODER6_0;
+GPIOB->ODR &= ~ GPIO_ODR_OD6;
+
+GPIOA->MODER |= GPIO_MODER_MODER6_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER |= GPIO_MODER_MODER0_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;}
+
+void durum2(){
+GPIOA->ODR &= ~ GPIO_ODR_OD6; //100
+GPIOB->ODR &= ~ GPIO_ODR_OD4;
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
+GPIOC->MODER |= GPIO_MODER_MODER6_0;
+GPIOC->ODR |= GPIO_ODR_OD6;
+GPIOB->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER |= GPIO_MODER_MODER4_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
+GPIOB->MODER |= GPIO_MODER_MODER6_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;}
+
+void durum3(){
+GPIOC->ODR &= ~ GPIO_ODR_OD6; // 110
+GPIOB->ODR &= ~ GPIO_ODR_OD4;
+GPIOA->MODER |= GPIO_MODER_MODER6_0;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOA->ODR |= GPIO_ODR_OD6;
+GPIOB->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER |= GPIO_MODER_MODER4_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
+GPIOB->MODER |= GPIO_MODER_MODER6_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;}
+
+void durum4(){
+GPIOC->ODR &= ~ GPIO_ODR_OD6; //010
+GPIOB->ODR &= ~ GPIO_ODR_OD4;
+GPIOA->MODER |= GPIO_MODER_MODER6_0;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOA->ODR |= GPIO_ODR_OD6;
+GPIOB->MODER |= GPIO_MODER_MODER6_0;
+GPIOB->ODR &= ~ GPIO_ODR_OD6;
+
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
+GPIOC->MODER |= GPIO_MODER_MODER6_1 ; 
+GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOC->MODER |= GPIO_MODER_MODER8_1 ;}
+
+void durum5(){
+GPIOC->ODR &= ~ GPIO_ODR_OD6; //011
+GPIOA->ODR &= ~ GPIO_ODR_OD6;
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOB->MODER |= GPIO_MODER_MODER4_0;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOB->ODR |= GPIO_ODR_OD4;
+GPIOB->MODER |= GPIO_MODER_MODER6_0;
+GPIOB->ODR &= ~ GPIO_ODR_OD6;
+
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
+GPIOC->MODER |= GPIO_MODER_MODER6_1 ; 
+GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOC->MODER |= GPIO_MODER_MODER8_1 ;}
+
+void durum6(){
+GPIOC->ODR &= ~ GPIO_ODR_OD6; //001
+GPIOA->ODR &= ~ GPIO_ODR_OD6;
+GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOB->MODER |= GPIO_MODER_MODER4_0;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
+GPIOB->ODR |= GPIO_ODR_OD4;
+GPIOB->MODER |= GPIO_MODER_MODER6_0;
+GPIOB->ODR &= ~ GPIO_ODR_OD6;
+
+GPIOA->MODER |= GPIO_MODER_MODER6_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOB->MODER |= GPIO_MODER_MODER0_1 ;
+GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
+GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;	
 }
-
-void durum1(){GPIOA->ODR &= ~ GPIO_ODR_OD6; // 101
-GPIOB->ODR &= ~ GPIO_ODR_OD4;
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
-GPIOC->MODER |= GPIO_MODER_MODER6_0;
-GPIOC->ODR |= GPIO_ODR_OD6;
-GPIOB->MODER |= GPIO_MODER_MODER6_0;
-GPIOB->ODR &= ~ GPIO_ODR_OD6;
-
-GPIOA->MODER |= GPIO_MODER_MODER6_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER |= GPIO_MODER_MODER0_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;}
-
-void durum2(){GPIOA->ODR &= ~ GPIO_ODR_OD6; //100
-GPIOB->ODR &= ~ GPIO_ODR_OD4;
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
-GPIOC->MODER |= GPIO_MODER_MODER6_0;
-GPIOC->ODR |= GPIO_ODR_OD6;
-GPIOB->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER |= GPIO_MODER_MODER4_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
-GPIOB->MODER |= GPIO_MODER_MODER6_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;}
-
-void durum3(){GPIOC->ODR &= ~ GPIO_ODR_OD6; // 110
-GPIOB->ODR &= ~ GPIO_ODR_OD4;
-GPIOA->MODER |= GPIO_MODER_MODER6_0;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOA->ODR |= GPIO_ODR_OD6;
-GPIOB->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER |= GPIO_MODER_MODER4_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
-GPIOB->MODER |= GPIO_MODER_MODER6_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;}
-
-void durum4(){GPIOC->ODR &= ~ GPIO_ODR_OD6; //010
-GPIOB->ODR &= ~ GPIO_ODR_OD4;
-GPIOA->MODER |= GPIO_MODER_MODER6_0;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_0;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOA->ODR |= GPIO_ODR_OD6;
-GPIOB->MODER |= GPIO_MODER_MODER6_0;
-GPIOB->ODR &= ~ GPIO_ODR_OD6;
-
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
-GPIOC->MODER |= GPIO_MODER_MODER6_1 ; 
-GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOC->MODER |= GPIO_MODER_MODER8_1 ;}
-
-void durum5(){GPIOC->ODR &= ~ GPIO_ODR_OD6; //011
-GPIOA->ODR &= ~ GPIO_ODR_OD6;
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOB->MODER |= GPIO_MODER_MODER4_0;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOB->ODR |= GPIO_ODR_OD4;
-GPIOB->MODER |= GPIO_MODER_MODER6_0;
-GPIOB->ODR &= ~ GPIO_ODR_OD6;
-
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
-GPIOC->MODER |= GPIO_MODER_MODER6_1 ; 
-GPIOB->MODER &= ~ GPIO_MODER_MODER0_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOC->MODER |= GPIO_MODER_MODER8_1 ;}
-
-void durum6(){GPIOC->ODR &= ~ GPIO_ODR_OD6; //001
-GPIOA->ODR &= ~ GPIO_ODR_OD6;
-GPIOA->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOB->MODER |= GPIO_MODER_MODER4_0;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_0;
-GPIOB->ODR |= GPIO_ODR_OD4;
-GPIOB->MODER |= GPIO_MODER_MODER6_0;
-GPIOB->ODR &= ~ GPIO_ODR_OD6;
-
-GPIOA->MODER |= GPIO_MODER_MODER6_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER4_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOB->MODER |= GPIO_MODER_MODER0_1 ;
-GPIOB->MODER &= ~ GPIO_MODER_MODER6_1 ;
-GPIOC->MODER &= ~ GPIO_MODER_MODER8_1 ;	}
-
 void TIM3_IRQHandler(){
 TIM3->SR &= ~TIM_SR_UIF;
 adc=ADC1->DR;
-voltaj = (adc/4);
+voltaj = (adc/4); //5K pot için
 if(sur<voltaj)
 {
 sur= sur+1;
 ccr=sur;
 }
 else
-{
-sur=voltaj;
+{sur=voltaj;
+}	TIM4->CCR1 &= ~TIM_PSC_PSC;
+TIM4->CCR1 |= ccr;
+TIM3->CCR1 &= ~TIM_PSC_PSC;
+TIM3->CCR1 |= ccr;
+TIM3->CCR3 &= ~TIM_PSC_PSC;
+TIM3->CCR3 |= ccr;
 }
-capture();
-}
-
 void EXTI2_IRQHandler()
 {
 EXTI->PR |= EXTI_PR_PR2;
 while(ccr>10)
 {
-for(i=0;i<10000;i++);
 sur=sur-1;
 ccr=sur;
 voltaj=sur;
-capture();
-if(GPIOA->IDR & 1<<10)
-{ HA=1;
-}else
-{HA=0;
-}if(GPIOA->IDR & 1<<8)
-{HB=1;
-} else
-{ HB=0;
-} if(GPIOA->IDR & 1<<15)
-{ HC=1;
-} else
-{ HC=0;
-}
+sensor();
 if(HA==1 && HB==0 && HC==1) // 6 durum
-{
-durum1();
+{durum1();
 }
 if(HA==1 && HB==0 && HC==0)
-{
-durum2();
+{durum2();
 }
 if(HA==1 && HB==1 && HC==0)
-{
-durum3();
+{durum3();
 }
 if(HA==0 && HB==1 && HC==0)
-{
-durum4();
+{durum4();
 }
 if(HA==0 && HB==1 && HC==1)
-{
-durum5();
+{durum5();
 }
 if(HA==0 && HB==0 && HC==1)
-{
-durum6();
-}}
-}
-
+{durum6();
+}}}
 void EXTI9_5_IRQHandler(){
 EXTI->PR |= EXTI_PR_PR8;
-a=a+1;
 sensor();
-
 if(HA==1 && HB==0 && HC==1) // 6 durum
-{ 
-durum1();
-}
-if(HA==1 && HB==0 && HC==0)
-{
-durum2();
-}
-if(HA==1 && HB==1 && HC==0)
-{
-durum3();
-}
-if(HA==0 && HB==1 && HC==0)
-{
-durum4();
-}
-if(HA==0 && HB==1 && HC==1)
-{
-durum5();
-}
-if(HA==0 && HB==0 && HC==1)
-{
-durum6();
+{durum1();
+}if(HA==1 && HB==0 && HC==0)
+{durum2();
+}if(HA==1 && HB==1 && HC==0)
+{durum3();
+}if(HA==0 && HB==1 && HC==0)
+{durum4();
+}if(HA==0 && HB==1 && HC==1)
+{durum5();
+}if(HA==0 && HB==0 && HC==1)
+{durum6();
 }}
 void EXTI15_10_IRQHandler(){
 EXTI->PR |= EXTI_PR_PR10 | EXTI_PR_PR15;
@@ -236,28 +191,22 @@ sensor();
 {
 
 if(HA==1 && HB==0 && HC==1) // 6 durum
-{ 
-durum1();
+{durum1();
 }
 if(HA==1 && HB==0 && HC==0)
-{
-durum2();
+{durum2();
 }
 if(HA==1 && HB==1 && HC==0)
-{
-durum3();
+{durum3();
 }
 if(HA==0 && HB==1 && HC==0)
-{
-durum4();
+{durum4();
 }
 if(HA==0 && HB==1 && HC==1)
-{
-durum5();
+{durum5();
 }
 if(HA==0 && HB==0 && HC==1)
-{
-durum6();
+{durum6();
 }}}
 int main(){
 
@@ -279,7 +228,6 @@ GPIOC->MODER |= GPIO_MODER_MODER9_1;
 GPIOC->MODER |= GPIO_MODER_MODER8_1; // PC8 PWM C-
 
 GPIOC->AFR[1] |= 0x00000002;
-
 GPIOB->AFR[0] |= GPIO_AFRL_AFRL4_1;
 GPIOC->AFR[0] |= GPIO_AFRL_AFRL6_1;
 GPIOB->AFR[0] |= GPIO_AFRL_AFRL7_1;
@@ -329,7 +277,6 @@ TIM3->CCER |= TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E; //ENABLE
 TIM3->CCMR2 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_0; 
 NVIC_EnableIRQ(TIM3_IRQn); //INTERRUPT
 
-
 TIM4->PSC &= ~TIM_PSC_PSC;
 TIM4->PSC |= 159;
 TIM4->ARR &= ~TIM_PSC_PSC;
@@ -358,34 +305,19 @@ NVIC_EnableIRQ(23); //5_9 ARASI INTERRUPT
 NVIC_EnableIRQ(8);
 NVIC_EnableIRQ(TIM3_IRQn);
 
-
 while(1){
 
 sensor();
-{
 if(HA==1 && HB==0 && HC==1) // 6 durum
-{ 
-durum1();
-}
-if(HA==1 && HB==0 && HC==0)
-{
-durum2();
-}
-if(HA==1 && HB==1 && HC==0)
-{
-durum3();
-}
-if(HA==0 && HB==1 && HC==0)
-{
-durum4();
-}
-if(HA==0 && HB==1 && HC==1)
-{
-durum5();
-}
-if(HA==0 && HB==0 && HC==1)
-{
-durum6();
-}}
-}
-}
+{durum1();
+}if(HA==1 && HB==0 && HC==0)
+{durum2();
+}if(HA==1 && HB==1 && HC==0)
+{durum3();
+}if(HA==0 && HB==1 && HC==0)
+{durum4();
+}if(HA==0 && HB==1 && HC==1)
+{durum5();
+}if(HA==0 && HB==0 && HC==1)
+{durum6();
+}}}
